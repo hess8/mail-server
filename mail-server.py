@@ -5,6 +5,10 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from time import perf_counter, sleep
 
+def readfileNoStrip(filepath):
+    with open(filepath) as f:
+        lines = f.read().splitlines(True) #keeplinebreaks=True.  Does not strip the lines of \n
+    return lines
 
 def sendEmail(string):
     msg = email.message_from_string(string)
@@ -19,27 +23,8 @@ def sendEmail(string):
         sys.exit('Stop')
 
 
-from email.message import EmailMessage
 
-def create_mime_message_from_string(message_string):
-    """Creates a MIME message from a string."""
-
-    msg = email.message_from_string(message_string)
-    return msg
-
-# Example usage
-message_string = """From: sender@example.com
-To: recipient@example.com
-Subject: Test Message
-
-This is the body of the email message.
-"""
-
-message = create_mime_message_from_string(message_string)
-
-
-queue_dir = 'mnt/P/landscapes-zip/mail'
-
+queue_dir = '/media/sf_landscapes-zip/mail'
 if not os.path.exists(queue_dir):
     os.mkdir(queue_dir)
 
@@ -47,7 +32,23 @@ loop_period = 60 # sec
 
 go = True
 while go:
-    to_send = os.listdir(queue_dir)
+    to_send = []
+    items = os.listdir(queue_dir)
+    for item in items:
+        if '.str' in item:
+         to_send.append(item)
     for message in to_send:
+        lines = readfileNoStrip(os.path.join(queue_dir,item))
+        sender = lines[0].strip()
+        recipient = lines[1].strip()
+        body = ''
+        for line in lines[2:]:
+            body += line
+    s = smtplib.SMTP('skylinescondor.com')
+    s.sendmail(sender, recipient.encode("ascii"), body)
+    s.quit()
+
+    sleep(loop_period)
+
 
 
