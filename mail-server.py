@@ -12,7 +12,7 @@ sys.path.append('/media/sf_shared_VMs/common_py')
 from common import readfileNoStrip, checkAdminRights, subPopenTry
 
 domain = 'soardata.org'
-private_key_path = 'dkimKey' #'/etc/opendkim/keys/soardata.org/default.private'
+private_key_path = 'dkimKey' # also in: '/etc/opendkim/keys/soardata.org/default.private'
 queue_dir = '/media/sf_shared_VMs/mail'
 
 #if not checkAdminRights():
@@ -37,44 +37,31 @@ while go:
         sender = 'bret@soardata.org'
         recipient = lines[1].strip()
         subject =  lines[2].strip()
-        plain = lines[3]
-        html = lines[4]
-        smtp = True
-        if smtp:
-            msg = MIMEMultipart()
-            msg['From'] = sender
-            msg['To'] = recipient
-            msg['Subject'] = subject
-            msg['Date'] = email.utils.formatdate()
-            msg['Message-ID'] = email.utils.make_msgid(domain=domain)
-            msg.attach(MIMEText(plain, "plain"))
-            msg.attach(MIMEText(html, "html"))
-            sig = dkim.sign(
-                message=msg.as_string().encode("ascii"),
-                selector=str("mail").encode("ascii"),
-                domain=domain.encode("ascii"),
-                privkey=private_key,
-                include_headers=headers, )
-            msg["DKIM-Signature"] = sig.decode("ascii").lstrip("DKIM-Signature: ")
-            s = smtplib.SMTP("{}".format('localhost:25'))
-            s.sendmail(sender, recipient, msg.as_string())
-        cmds = '\
-            (echo "From: {}";\
-            echo "To: {}";\
-            echo "Subject: {}";\
-            echo "MIME-Version: 1.0";\
-            echo "Content-Type: text/plain";\
-            echo "";\
-            echo "{}";\
-            echo "MIME-Version: 1.0";\
-            echo "Content-Type: text/html";\
-            echo "";\
-            echo "{}";\
-            ) | sendmail -t {}\
-            ] '.format(sender,recipient,subject,plain,html,recipient)
+        plain = []
+        html = []
+        for line in lines[3:]:
+            if line[0] =='<':
+                html.append(line)
+            else:
+                plain.append(line)
 
-        os.system(cmds)
-        sys.exit('Stop')
+        msg = MIMEMultipart()
+        msg['From'] = sender
+        msg['To'] = recipient
+        msg['Subject'] = subject
+        msg['Date'] = email.utils.formatdate()
+        msg['Message-ID'] = email.utils.make_msgid(domain=domain)
+        msg.attach(MIMEText(''.join(plain), "plain"))
+        msg.attach(MIMEText(''.join(html), "html"))
+        sig = dkim.sign(
+            message=msg.as_string().encode("ascii"),
+            selector=str("mail").encode("ascii"),
+            domain=domain.encode("ascii"),
+            privkey=private_key,
+            include_headers=headers, )
+        msg["DKIM-Signature"] = sig.decode("ascii").lstrip("DKIM-Signature: ")
+        s = smtplib.SMTP("{}".format('localhost:25'))
+        s.sendmail(sender, recipient, msg.as_string())
         sleep(loop_period)
 
 
