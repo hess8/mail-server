@@ -62,7 +62,7 @@ while go:
         msg["DKIM-Signature"] = sig.decode("ascii").lstrip("DKIM-Signature: ")
         s = smtplib.SMTP("{}".format('localhost:25'))
         s.sendmail(sender, recipient, msg.as_string())
-        sleep(loop_period)
+    sleep(loop_period)
 
 
 
