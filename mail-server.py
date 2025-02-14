@@ -12,12 +12,12 @@ from time import perf_counter, sleep
 sys.path.append('/media/sf_shared_VMs/common_py')
 from common import readfileNoStrip, checkAdminRights, subPopenTry
 
-sender = ''
+sender ='SkylinesCondor'
 queue_dir = '/media/sf_shared_VMs/mail'
 log_file = os.path.join(queue_dir,'emails.log')
 loop_period = 10 # sec
 domain = 'soardata.org'
-private_key_path = 'dkimKey' # also in: '/etc/opendkim/keys/soardata.org/default.private'
+private_key_path = 'dkimPrivate' # also in: '/etc/opendkim/keys/soardata.org/default.private'
 
 
 #if not checkAdminRights():
@@ -38,21 +38,11 @@ while go:
     for message_name in to_send:
         message_file = os.path.join(queue_dir,message_name)
         lines = readfileNoStrip(message_file)
-        #sender = lines[0].strip()
         recipient = lines[1].strip()
-        firstName =  lines[2].strip()
-        subject = lines[3].strip()
-        bodyStart = 4 #line 4
+        subject = lines[2].strip()
+        bodyStart = 3 #line 4
         timeTag = datetime.now().strftime("%y/%m/%d %H:%M:%S")
-        plain = ['Hi {},\n'.format(firstName)]
-        html = []
-
-        for il,line in enumerate(lines[bodyStart:]):
-            if not line[0] == '<':
-                plain.append(line)
-            else:
-                html = lines[bodyStart + il:]
-                break
+        html = lines[bodyStart:]
 
         msg = MIMEMultipart()
         msg['From'] = sender
@@ -60,25 +50,24 @@ while go:
         msg['Subject'] = subject
         msg['Date'] = email.utils.formatdate()
         msg['Message-ID'] = email.utils.make_msgid(domain=domain)
-        msg.attach(MIMEText(''.join(plain), "plain"))
         msg.attach(MIMEText(''.join(html), "html"))
         try:
-            sig = dkim.sign(
-                message=msg.as_string().encode("ascii"),
-                selector=str("mail").encode("ascii"),
-                domain=domain.encode("ascii"),
-                privkey=private_key,
-                include_headers=headers, )
-            msg["DKIM-Signature"] = sig.decode("ascii").lstrip("DKIM-Signature: ")
+            #sig = dkim.sign(
+            ##     message=msg.as_string().encode("ascii"),
+            #     selector=str("default").encode("ascii"),
+            #     domain=domain.encode("ascii"),
+            #     privkey=private_key,
+            #     include_headers=headers, )
+            #msg["DKIM-Signature"] = sig.decode("ascii").lstrip("DKIM-Signature: ")
             s = smtplib.SMTP("{}".format('localhost:25'))
             s.sendmail(sender, recipient, msg.as_string())
-            print(timeTag, 'sent', recipient, sender, subject)
+            print(timeTag, 'sent', recipient, sender, subject,'\n')
             f = open(log_file,'a')
             f.write('{} sent {} {} {}'.format(timeTag, recipient, sender, subject))
             f.close()
             os.remove(message_file)
         except Exception as e:
-            print(e, recipient,sender, subject)
+            print(e, recipient,sender, subject,'\n')
     sleep(loop_period)
 
 
