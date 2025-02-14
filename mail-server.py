@@ -60,7 +60,7 @@ while go:
             s.sendmail(sender, recipient, msg.as_string())
             print(timeTag, 'sent', recipient, sender, subject,'\n')
             f = open(log_file,'a')
-            f.write('{} sent {} {} {}'.format(timeTag, recipient, sender, subject))
+            f.write('{} sent {} {} {}\n'.format(timeTag, recipient, sender, subject))
             f.close()
             os.remove(message_file)
         except Exception as e:
