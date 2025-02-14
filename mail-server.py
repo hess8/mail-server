@@ -4,6 +4,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from time import perf_counter, sleep
+from datetime import datetime
 
 sys.path.append('/media/sf_shared_VMs/common_py')
 from common import readfileNoStrip, checkAdminRights, subPopenTry
