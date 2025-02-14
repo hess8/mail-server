@@ -48,6 +48,7 @@ while go:
         msg['Date'] = email.utils.formatdate()
         msg['Message-ID'] = email.utils.make_msgid(domain=domain)
         msg.attach(MIMEText(''.join(html), "html"))
+        f = open(log_file, 'a')
         try:
             #sig = dkim.sign(
             ##     message=msg.as_string().encode("ascii"),
@@ -61,10 +62,11 @@ while go:
             print(timeTag, 'sent', recipient, sender, subject,'\n')
             f = open(log_file,'a')
             f.write('{} sent {} {} {}\n'.format(timeTag, recipient, sender, subject))
-            f.close()
             os.remove(message_file)
         except Exception as e:
             print(e, recipient,sender, subject,'\n')
+            f.write('{} err  {} {} {}\n'.format(timeTag, recipient, e, subject))
+        f.close()
     sleep(loop_period)
 
 
