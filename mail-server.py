@@ -1,26 +1,29 @@
 import os, sys
-#
-#import dkim
+import email
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from time import perf_counter, sleep
 
 sys.path.append('/media/sf_shared_VMs/common_py')
-from common import readfileNoStrip, checkAdminRights
+from common import readfileNoStrip, checkAdminRights, subPopenTry
 
-private_key_path = '/etc/opendkim/keys/soardata.org/default.private'
-queue_dir = '/media/sf_landscapes-zip/mail'
+sender ='SkylinesCondor'
+queue_dir = '/media/sf_shared_VMs/mail'
+log_file = os.path.join(queue_dir,'emails.log')
+loop_period = 10 # sec
+domain = 'soardata.org'
+private_key_path = 'dkimPrivate' # also in: '/etc/opendkim/keys/soardata.org/default.private'
 
-if not checkAdminRights():
-    sys.exit('Stop.  Must run with admin privileges: sudo /snap/pycharm-community/current/bin/pycharm')
+
+#if not checkAdminRights():
+#    sys.exit('Stop.  Must run with admin privileges: sudo /snap/pycharm-community/current/bin/pycharm')
 with open(private_key_path, 'rb') as f:
     private_key = f.read()
 if not os.path.exists(queue_dir):
     os.mkdir(queue_dir)
 
-loop_period = 60 # sec
-
+headers = ["To", "From", "Subject"]
 go = True
 while go:
     to_send = []
@@ -28,43 +31,40 @@ while go:
     for item in items:
         if '.msg' in item:
          to_send.append(item)
-    for message_file in to_send:
-        lines = readfileNoStrip(os.path.join(queue_dir,message_file))
-        #sender = lines[0].strip()
-        sender = 'bret@soardata.org'
+    for message_name in to_send:
+        message_file = os.path.join(queue_dir,message_name)
+        lines = readfileNoStrip(message_file)
         recipient = lines[1].strip()
-        subject =  lines[2].strip()
-        plain = lines[3]
-        html = lines[4]
-        msg = MIMEMultipart('alternative')
-        msg["Subject"] = subject
-        msg["From"] = sender
-        msg.attach(MIMEText(plain, 'plain'))
-        msg.attach(MIMEText(html, 'html'))
-        dkim_header = dkim.sign(
-            msg.as_bytes(),
-            private_key=private_key,
-            #selector=selector,
-            domain='soardata.org'
-        )
-        msg_str = dkim_header.decode('utf-8') + '\n' + msg.as_string()
+        subject = lines[2].strip()
+        bodyStart = 3 #line 4
+        timeTag = datetime.now().strftime("%y/%m/%d %H:%M:%S")
+        html = lines[bodyStart:]
+
+        msg = MIMEMultipart()
+        msg['From'] = sender
+        msg['To'] = recipient
+        msg['Subject'] = subject
+        msg['Date'] = email.utils.formatdate()
+        msg['Message-ID'] = email.utils.make_msgid(domain=domain)
+        msg.attach(MIMEText(''.join(html), "html"))
         try:
-            server = smtplib.SMTP_SSL('localhost',465) #port 465 does automatic encryption
-#            server.login('your_smtp_username', 'your_smtp_password')
-            server.sendmail(sender, recipient, msg_str)
-            server.quit()
-            print("Email sent successfully with DKIM signature.")
+            #sig = dkim.sign(
+            ##     message=msg.as_string().encode("ascii"),
+            #     selector=str("default").encode("ascii"),
+            #     domain=domain.encode("ascii"),
+            #     privkey=private_key,
+            #     include_headers=headers, )
+            #msg["DKIM-Signature"] = sig.decode("ascii").lstrip("DKIM-Signature: ")
+            s = smtplib.SMTP("{}".format('localhost:25'))
+            s.sendmail(sender, recipient, msg.as_string())
+            print(timeTag, 'sent', recipient, sender, subject,'\n')
+            f = open(log_file,'a')
+            f.write('{} sent {} {} {}'.format(timeTag, recipient, sender, subject))
+            f.close()
+            os.remove(message_file)
         except Exception as e:
-            print(f"Error sending email: {e}")
-
-
-
-
-        s = smtplib.SMTP('soardata.org')
-        s.sendmail(sender, recipient, body)
-        s.quit()
-        sys.exit('Stop')
-        sleep(loop_period)
+            print(e, recipient,sender, subject,'\n')
+    sleep(loop_period)
 
 
 
