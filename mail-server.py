@@ -16,9 +16,17 @@ loop_period = 10 # sec
 domain = 'soardata.org'
 private_key_path = 'dkimPrivate' # also in: '/etc/opendkim/keys/soardata.org/default.private'
 
+def spinning_cursor():
+    while True:
+        for cursor in '|/-\\':
+            yield cursor
+
+spinner = spinning_cursor()
+spinTick = 0.3 #sec
 
 #if not checkAdminRights():
 #    sys.exit('Stop.  Must run with admin privileges: sudo /snap/pycharm-community/current/bin/pycharm')
+print('Mail server running')
 with open(private_key_path, 'rb') as f:
     private_key = f.read()
 if not os.path.exists(queue_dir):
@@ -67,7 +75,12 @@ while go:
             print(e, recipient,sender, subject,'\n')
             f.write('{} err  {} {} {}\n'.format(timeTag, recipient, e, subject))
         f.close()
-    sleep(loop_period)
+    for _ in range(int(loop_period/spinTick)):
+        sys.stdout.write(next(spinner))
+        sys.stdout.flush()
+        sleep(spinTick)
+        sys.stdout.write('\b')
+#    sleep(loop_period)
 
 
 
