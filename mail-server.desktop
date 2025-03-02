@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Exec=gnome-terminal -- bash -c 'cd mail-server; pipenv run python mail-server.py; bash' 
+Hidden=false
+X-GNOME-Autostart-enabled=true
+Name=Startup Script
+Comment='Start mail-server with pipenv run'
