@@ -24,8 +24,6 @@ def spinning_cursor():
 spinner = spinning_cursor()
 spinTick = 0.3 #sec
 
-#if not checkAdminRights():
-#    sys.exit('Stop.  Must run with admin privileges: sudo /snap/pycharm-community/current/bin/pycharm')
 print('Mail server running')
 with open(private_key_path, 'rb') as f:
     private_key = f.read()
@@ -58,15 +56,6 @@ while go:
         msg.attach(MIMEText(''.join(html), "html"))
         f = open(log_file, 'a')
         try:
-            #sig = dkim.sign(
-            ##     message=msg.as_string().encode("ascii"),
-            #     selector=str("default").encode("ascii"),
-            #     domain=domain.encode("ascii"),
-            #     privkey=private_key,
-            #     include_headers=headers, )
-            #msg["DKIM-Signature"] = sig.decode("ascii").lstrip("DKIM-Signature: ")
-            s = smtplib.SMTP("{}".format('localhost:25'))
-            s.sendmail(sender, recipient, msg.as_string())
             print(timeTag, 'sent', recipient, sender, subject,'\n')
             f = open(log_file,'a')
             f.write('{} sent {} {} {}\n'.format(timeTag, recipient, sender, subject))
@@ -80,7 +69,6 @@ while go:
         sys.stdout.flush()
         sleep(spinTick)
         sys.stdout.write('\b')
-#    sleep(loop_period)
 
 
 
