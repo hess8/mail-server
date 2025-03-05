@@ -159,8 +159,7 @@ alias ll='ls -l'
 alias wc='wc -l'
 alias ncdu='/home/bret/ncduDiskUsage/ncdu -x'
 alias pfr='sudo service postfix restart'
-alias msr='python mail-server.py'
-alias ms='cd ~/mail-server; pips'
+alias ms='cd /home/bret/mail-server/; pipenv run python mail-server.py'
 nginxconfigbackup() { 
   sudo cp /etc/nginx/sites-available/skylinescondor /etc/nginx/sites-available/skylinescondor.$(date "+%Y-%m-%d_%H:%M")-$1
 }
