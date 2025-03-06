@@ -1,3 +1,0 @@
-default._domainkey	IN	TXT	( "v=DKIM1; h=sha256; k=rsa; "
-	  "p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtzrW8qBHHEBQzBgl7e/BuaQoXyhG0+PuCvpIRPybdDC5BDzJXiRHFoMSs2y+tKkO0P8SI7hWWQ7vbet7lEjK0Mge5XwJRpYVwifToqRZlmxoD6Y+X5BF9yhI4DlpmwGgPhQRS2Nz+jp/fEEyLYsnRcBBIsrmcuObVuBlv0MR4hTbDwrz7HPCvIBJUp7UaqKZ4Pnxcl/zQKkPsp"
-	  "ItdDFGpIRCg45ohRjOciQtQoLRtUheMC6kUYNexMF+l/dL7cu1hAyVr5ge3gWmwQIolgFzABuaejpqX5h4DM5EG4XBsDSE7YRq57ExrPtqsMMtZCqcSyTBmUi4ErK4wD9t+P4/aQIDAQAB" )  ; ----- DKIM key default for soardata.org
