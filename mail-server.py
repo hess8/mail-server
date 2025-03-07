@@ -5,6 +5,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from time import perf_counter, sleep
 from datetime import datetime
+from dotenv import load_dotenv
 
 sys.path.append('/media/sf_shared_VMs/common_py')
 from common import readfileNoStrip, checkAdminRights, subPopenTry
@@ -14,7 +15,7 @@ queue_dir = '/media/sf_shared_VMs/mail'
 log_file = os.path.join(queue_dir,'emails.log')
 loop_period = 10 # sec
 domain = 'soardata.org'
-private_key_path = '/etc/opendkim/keys/soardata.org/default.private'
+private_key_path = '../.secure/dkimPrivate'
 
 def spinning_cursor():
     while True:
