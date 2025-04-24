@@ -26,6 +26,9 @@ spinner = spinning_cursor()
 spinTick = 0.3 #sec
 
 print('Mail server running')
+
+if not os.path.exists(queue_dir): os.mkdir(queue_dir)
+if not os.path.exists(sent_dir): os.mkdir(sent_dir)
 with open(private_key_path, 'rb') as f:
     private_key = f.read()
 if not os.path.exists(queue_dir):
