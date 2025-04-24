@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, shutil
 import email
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -9,6 +9,18 @@ from dotenv import load_dotenv
 
 sys.path.append('/media/sf_shared_VMs/common_py')
 from common import readfileNoStrip, checkAdminRights, subPopenTry
+
+def sendEmail(string):
+    msg = email.message_from_string(string)
+    print("Sending email to {} (ID: {})...".format(user.name.encode("utf-8"), user.id))
+    print(format(user.email_address))
+    try:
+        s.sendmail(sender, recipient.encode("ascii"), msg.as_string())
+        s.quit()
+    except BaseException as e:
+        print(recipient)
+        print("Sending email failed: {}".format(e))
+        sys.exit('Stop')
 
 def spinning_cursor():
     while True:
@@ -25,7 +37,6 @@ private_key_path = '../.secure/dkimPrivate'
 spinner = spinning_cursor()
 spinTick = 0.3 #sec
 
-print('Mail server running')
 
 if not os.path.exists(queue_dir): os.mkdir(queue_dir)
 if not os.path.exists(sent_dir): os.mkdir(sent_dir)
@@ -60,11 +71,15 @@ while go:
         msg.attach(MIMEText(''.join(html), "html"))
         f = open(log_file, 'a')
         try:
+            s = smtplib.SMTP("{}".format('localhost:25'))
+            s.sendmail(sender, recipient, msg.as_string())
+
             print(timeTag, 'sent', recipient, sender, subject,'\n')
             f = open(log_file,'a')
             f.write('{} sent {} {} {}\n'.format(timeTag, recipient, sender, subject))
             sent_path = os.path.join(sent_dir,message_name)
             shutil.move(queued_path,sent_path)
+            os.system('touch {}'.format(sent_path)) #
         except Exception as e:
             print(e, recipient,sender, subject,'\n')
             f.write('{} err  {} {} {}\n'.format(timeTag, recipient, e, subject))
