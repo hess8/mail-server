@@ -10,18 +10,18 @@ from dotenv import load_dotenv
 sys.path.append('/media/sf_shared_VMs/common_py')
 from common import readfileNoStrip, checkAdminRights, subPopenTry
 
-sender ='SkylinesCondor'
-queue_dir = '/media/sf_shared_VMs/mail'
-log_file = os.path.join(queue_dir,'emails.log')
-loop_period = 10 # sec
-domain = 'soardata.org'
-private_key_path = '../.secure/dkimPrivate'
-
 def spinning_cursor():
     while True:
         for cursor in '|/-\\':
             yield cursor
 
+sender ='SkylinesCondor'
+queue_dir = '/media/sf_shared_VMs/mail/queue'
+sent_dir = '/media/sf_shared_VMs/mail/sent'
+log_file = os.path.join(queue_dir,'emails.log')
+loop_period = 10 # sec
+domain = 'soardata.org'
+private_key_path = '../.secure/dkimPrivate'
 spinner = spinning_cursor()
 spinTick = 0.3 #sec
 
@@ -40,8 +40,8 @@ while go:
         if '.msg' in item:
          to_send.append(item)
     for message_name in to_send:
-        message_file = os.path.join(queue_dir,message_name)
-        lines = readfileNoStrip(message_file)
+        queued_path = os.path.join(queue_dir,message_name)
+        lines = readfileNoStrip(queued_path)
         recipient = lines[1].strip()
         subject = lines[2].strip()
         bodyStart = 3 #line 4
@@ -60,7 +60,8 @@ while go:
             print(timeTag, 'sent', recipient, sender, subject,'\n')
             f = open(log_file,'a')
             f.write('{} sent {} {} {}\n'.format(timeTag, recipient, sender, subject))
-            os.remove(message_file)
+            sent_path = os.path.join(sent_dir,message_name)
+            shutil.move(queued_path,sent_path)
         except Exception as e:
             print(e, recipient,sender, subject,'\n')
             f.write('{} err  {} {} {}\n'.format(timeTag, recipient, e, subject))
