@@ -16,7 +16,7 @@ def spinning_cursor():
             yield cursor
 
 sender ='SkylinesCondor'
-queue_dir = '/media/sf_shared_VMs/mail/queue'
+queue_dir = '/media/sf_shared_VMs/mail/queued'
 sent_dir = '/media/sf_shared_VMs/mail/sent'
 log_file = os.path.join(queue_dir,'emails.log')
 loop_period = 10 # sec
