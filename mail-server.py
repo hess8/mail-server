@@ -6,21 +6,10 @@ from email.mime.text import MIMEText
 from time import perf_counter, sleep
 from datetime import datetime
 from dotenv import load_dotenv
-
-sys.path.append('/media/sf_shared_VMs/common_py')
+load_dotenv()
+shared_path = '/media/shared_VMs'
+sys.path.append(os.path.join(shared_path,'common_py'))
 from common import readfileNoStrip, checkAdminRights, subPopenTry
-
-def sendEmail(string):
-    msg = email.message_from_string(string)
-    print("Sending email to {} (ID: {})...".format(user.name.encode("utf-8"), user.id))
-    print(format(user.email_address))
-    try:
-        s.sendmail(sender, recipient.encode("ascii"), msg.as_string())
-        s.quit()
-    except BaseException as e:
-        print(recipient)
-        print("Sending email failed: {}".format(e))
-        sys.exit('Stop')
 
 def spinning_cursor():
     while True:
@@ -28,20 +17,21 @@ def spinning_cursor():
             yield cursor
 
 sender ='SkylinesCondor'
-queue_dir = '/media/sf_shared_VMs/mail/queued'
-sent_dir = '/media/sf_shared_VMs/mail/sent'
-log_file = os.path.join(queue_dir,'emails.log')
+
+queue_dir = os.path.join(shared_path,'mail','queued')
+sent_dir = os.path.join(shared_path,'mail','sent')
+log_file = os.path.join(shared_path,'emails.log')
 loop_period = 10 # sec
 domain = 'soardata.org'
-private_key_path = '../.secure/dkimPrivate'
+#private_key_path = '../.secure/dkimPrivate'
 spinner = spinning_cursor()
 spinTick = 0.3 #sec
 
 
 if not os.path.exists(queue_dir): os.mkdir(queue_dir)
 if not os.path.exists(sent_dir): os.mkdir(sent_dir)
-with open(private_key_path, 'rb') as f:
-    private_key = f.read()
+#with open(private_key_path, 'rb') as f:
+#    private_key = f.read()
 if not os.path.exists(queue_dir):
     os.mkdir(queue_dir)
 
@@ -63,7 +53,7 @@ while go:
         html = lines[bodyStart:]
 
         msg = MIMEMultipart()
-        msg['From'] = sender
+        msg['From'] = '{}@{}'.format(sender, domain)
         msg['To'] = recipient
         msg['Subject'] = subject
         msg['Date'] = email.utils.formatdate()
@@ -73,7 +63,6 @@ while go:
         try:
             s = smtplib.SMTP("{}".format('localhost:25'))
             s.sendmail(sender, recipient, msg.as_string())
-
             print(timeTag, 'sent', recipient, sender, subject,'\n')
             f = open(log_file,'a')
             f.write('{} sent {} {} {}\n'.format(timeTag, recipient, sender, subject))
