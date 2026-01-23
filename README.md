@@ -1,1 +1,1 @@
-Reads messages queued by other programs and sends them
+Reads a file with messages queued by other programs and sends them
