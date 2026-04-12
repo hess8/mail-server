@@ -5,8 +5,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from time import perf_counter, sleep
 from datetime import datetime
-from dotenv import load_dotenv
-load_dotenv()
+
 shared_path = '/media/shared_VMs'
 sys.path.append(os.path.join(shared_path,'common_py'))
 
@@ -26,7 +25,7 @@ sent_dir = os.path.join(shared_path,'mail','sent')
 log_file = os.path.join(shared_path,'emails.log')
 loop_period = 10 # sec
 spinner = spinning_cursor()
-spinTick = 0.3 #sec
+spin_tick = 0.3 #sec
 
 if not os.path.exists(queue_dir): os.mkdir(queue_dir)
 if not os.path.exists(sent_dir): os.mkdir(sent_dir)
@@ -48,9 +47,9 @@ while go:
         domain = sender.split('@')[1]
         recipient = lines[1].strip()
         subject = lines[2].strip()
-        bodyStart = 3 #line 4
-        timeTag = datetime.now().strftime("%y/%m/%d %H:%M:%S")
-        html = lines[bodyStart:]
+        body_start = 3 #line 4
+        time_tag = datetime.now().strftime("%y/%m/%d %H:%M:%S")
+        html = lines[body_start:]
 
         msg = MIMEMultipart()
         msg['From'] = sender
@@ -63,20 +62,20 @@ while go:
         try:
             s = smtplib.SMTP("{}".format('localhost:25'))
             s.sendmail(sender, recipient, msg.as_string())
-            print(timeTag, 'sent', recipient, sender, subject,'\n')
+            print(time_tag, 'sent', recipient, sender, subject,'\n')
             f = open(log_file,'a')
-            f.write('{} sent {} {} {}\n'.format(timeTag, recipient, sender, subject))
+            f.write('{} sent {} {} {}\n'.format(time_tag, recipient, sender, subject))
             sent_path = os.path.join(sent_dir,message_name)
             shutil.move(queued_path,sent_path)
             os.system('touch {}'.format(sent_path)) #
         except Exception as e:
             print(e, recipient,sender, subject,'\n')
-            f.write('{} err  {} {} {}\n'.format(timeTag, recipient, e, subject))
+            f.write('{} err  {} {} {}\n'.format(time_tag, recipient, e, subject))
         f.close()
-    for _ in range(int(loop_period/spinTick)):
+    for _ in range(int(loop_period/spin_tick)):
         sys.stdout.write(next(spinner))
         sys.stdout.flush()
-        sleep(spinTick)
+        sleep(spin_tick)
         sys.stdout.write('\b')
 
 
