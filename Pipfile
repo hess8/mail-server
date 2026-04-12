@@ -8,5 +8,6 @@ verify_ssl = true
 [packages]
 numpy = "*"
 dotenv = "*"
+python-dotenv = "*"
 
 [requires]
