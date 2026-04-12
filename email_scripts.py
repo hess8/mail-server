@@ -13,14 +13,14 @@ def to_HTML(line):
 
 
 def queue_email(sender_addr, recip_name, recip_adrr, subject, text_list, help_line='', signature_line='', id=None):
-    '''
+
     """
     Queues email to a recipient or a test address.
     creates a text file for each email that email server
     on another machine will read
-"""
+
     text_lines: a list of lines that has all html needed except for paragraph tags
-    '''
+    """
 
     from datetime import datetime
     time_format = '%Y-%m-%d.%H.%M.%S.%f'
