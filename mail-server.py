@@ -9,29 +9,27 @@ from dotenv import load_dotenv
 load_dotenv()
 shared_path = '/media/shared_VMs'
 sys.path.append(os.path.join(shared_path,'common_py'))
-from common import readfileNoStrip, checkAdminRights, subPopenTry
 
 def spinning_cursor():
     while True:
         for cursor in '|/-\\':
             yield cursor
 
-sender ='SkylinesCondor'
+def read_file_no_strip(filepath):
+    f = open(filepath, 'r')
+    lines = f.readlines()
+    f.close()
+    return lines
 
 queue_dir = os.path.join(shared_path,'mail','queued')
 sent_dir = os.path.join(shared_path,'mail','sent')
 log_file = os.path.join(shared_path,'emails.log')
 loop_period = 10 # sec
-domain = 'soardata.org'
-#private_key_path = '../.secure/dkimPrivate'
 spinner = spinning_cursor()
 spinTick = 0.3 #sec
 
-
 if not os.path.exists(queue_dir): os.mkdir(queue_dir)
 if not os.path.exists(sent_dir): os.mkdir(sent_dir)
-#with open(private_key_path, 'rb') as f:
-#    private_key = f.read()
 if not os.path.exists(queue_dir):
     os.mkdir(queue_dir)
 
@@ -45,7 +43,9 @@ while go:
          to_send.append(item)
     for message_name in to_send:
         queued_path = os.path.join(queue_dir,message_name)
-        lines = readfileNoStrip(queued_path)
+        lines = read_file_no_strip(queued_path)
+        sender = lines[0].strip()
+        domain = sender.split('@')[1]
         recipient = lines[1].strip()
         subject = lines[2].strip()
         bodyStart = 3 #line 4
@@ -53,7 +53,7 @@ while go:
         html = lines[bodyStart:]
 
         msg = MIMEMultipart()
-        msg['From'] = '{}@{}'.format(sender, domain)
+        msg['From'] = sender
         msg['To'] = recipient
         msg['Subject'] = subject
         msg['Date'] = email.utils.formatdate()
