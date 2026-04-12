@@ -15,11 +15,11 @@ def writefile(filepath, lines):  # need to have \n's inserted already
     return
 
 
-def match_names(name, list):
+def match_names(string, other_strings):
     min_match = 75
     matches = []
-    for i, list_name in enumerate(list):
-        score = fuzz.ratio(name, list_name)
+    for i, list_string in enumerate(other_strings):
+        score = fuzz.ratio(string, list_string)
         if score > min_match:
-            matches.append([list_name, score])
+            matches.append([list_string, score])
     return matches

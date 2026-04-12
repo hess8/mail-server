@@ -1,11 +1,7 @@
-import os, sys
-import csv
-
-from mail_common import match_names, readfile_no_strip
+import os
 
 
-
-def to_h_tML(line):
+def to_HTML(line):
     '''
     Adds paragraph tags to a line
     '''
@@ -34,7 +30,7 @@ def queue_email(sender_addr, recip_name, recip_adrr, subject, text_list, help_li
         os.mkdir(queue_dir)
     html = []
     for line in text_list:
-        html.append(to_h_tML(line))
+        html.append(to_HTML(line))
     html.append(help_line)
     html.append(signature_line)
     try:
@@ -46,6 +42,7 @@ def queue_email(sender_addr, recip_name, recip_adrr, subject, text_list, help_li
         f.write(subject + '\n')
         f.writelines(html)
         f.close()
+
         f = open(log_file, 'a')
         f.write(f'{time_tag} queu {recip_name} {recip_adrr} {sender_addr} {subject}\n')
         f.close()
@@ -54,6 +51,6 @@ def queue_email(sender_addr, recip_name, recip_adrr, subject, text_list, help_li
         if id:
             recip_str += f' {id}'
         print(f'Queued email to {recip_str} {recip_adrr}')
-    except Base_exception as e:
+    except BaseException as e:
         print(f'Queueing failed {recip_str} {subject}')
         print(e)

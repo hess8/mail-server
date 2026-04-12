@@ -5,8 +5,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from time import perf_counter, sleep
 from datetime import datetime
-from dotenv import load_dotenv
-load_dotenv()
+
 shared_path = '/media/shared_VMs'
 sys.path.append(os.path.join(shared_path,'common_py'))
 
