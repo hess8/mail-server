@@ -1,5 +1,3 @@
-# Just a backup of a bashrc
-
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -9,8 +7,6 @@ case $- in
     *i*) ;;
       *) return;;
 esac
-
-#BCH section at bottom!
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
@@ -41,7 +37,7 @@ fi
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
-    xterm-color) color_prompt=yes;;
+    xterm-color|*-256color) color_prompt=yes;;
 esac
 
 # uncomment for a colored prompt, if the terminal has the capability; turned
@@ -88,6 +84,9 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
+# colored GCC warnings and errors
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
 # some more ls aliases
 alias ll='ls -alF'
 alias la='ls -A'
@@ -118,55 +117,63 @@ if ! shopt -oq posix; then
 fi
 
 #bch:
+export PATH="/home/bret/.local/bin/phantomjs-2.1.1-linux-x86_64/bin:$PATH"
+export QT_QPA_PLATFORM=offscreen
 export PS1='\W> '
 export POSTGIS_GDAL_ENABLED_DRIVERS=GTiff
 export POSTGIS_ENABLE_OUTDB_RASTERS=1
-export PATH="${HOME}/.local/bin:$PATH"
-export PIPENV_VENV_IN_PROJECT=1
-
+export FLASK_ENV=development
 alias skyl='cd /home/bret/servers/repo-skylinesC/skylinesC/'
 alias esky='cd /home/bret/servers/repo-skylinesC/skylinesC/ember'
-alias eserve5='esky;sudo ember serve --environment=production --port 80 --proxy http://localhost:5000/'
+#alias eserve5='esky;sudo ember serve --environment=production --port 80 --proxy http://localhost:5000/'
 alias eserve42-5='esky;sudo ember serve --environment=production --port 4200 --proxy http://localhost:5000/'
-
-alias mserve='skyl; pipenv run ./manage.py runserver'
-alias dbrecreate='pipenv run ./manage.py db recreate'
-alias dbcreate='pipenv run ./manage.py db create'
+#alias mserve='skyl; pipenv run ./manage.py runserver'
+alias gserve='skyl; pipenv run gunicorn -b 127.0.0.1:5000 -w 8 --no-sendfile wsgi_skylines'
+alias torrcreate='skyl; python production/utilities/createTorrents.py'
+alias pm='pipenv run ./manage.py'
 alias pycharm='./pycharm/bin/pycharm.sh'
 alias pgadmin='python ~/.local/share/virtualenvs/pgadmin-WsDn56it/lib/python2.7/site-packages/pgadmin4/pgAdmin4.py'
-alias pips='source venv/bin/activate'
-alias ngstart="sudo systemctl start nginx"
-alias ngstop="sudo systemctl stop nginx"
-alias ngrestart="sudo systemctl restart nginx"
-alias ngstatus="systemctl status nginx"
-alias ngreload="sudo kill -HUP `cat /var/run/nginx.pid`"
+alias pips='pipenv shell'
+alias ngstart="sudo service nginx start"
+alias ngstop="sudo service nginx stop"
+alias ngrestart="sudo service nginx restart"
+alias ngstatus="sudo service nginx status"
+#alias ngreload="sudo kill -HUP `cat /var/run/nginx.pid`"
 alias ngvim-default="sudo vim /etc/nginx/sites-available/default"
-alias ngvim-skylinesC='sudo vim /etc/nginx/sites-available/skylinescondor.com'
+alias ngvim-skylines='sudo vim /etc/nginx/sites-available/skylinescondor.com'
 alias ngvim-nginx.conf="sudo vim /etc/nginx/nginx.conf"
-alias ngerror.log="sudo tail -f -n200 /var/log/nginx/error.log"
-alias ngaccess.log="sudo tail -f -n200 /var/log/nginx/access.log"
+alias ngtail-error.log="sudo tail -f -n200 /var/log/nginx/error.log"
+alias ngtail-access.log="sudo tail -f -n200 /var/log/nginx/access.log"
 alias ngcd="cd /etc/nginx/"
-alias ngt="sudo nginx -t"
-alias ptest='skyl; python3 production/tests/pageSLCtest.py'
-alias group="cd groupFlights;pips;python groupflights.py"
+alias ngtest="sudo nginx -t"
+alias ngbackup-config-skylines.conf=nginxconfigbackup
+alias bu='python /home/bret/servers/repo-skylinesC/skylinesC/production/utilities/backupSkylines.py'
+alias ct='python /home/bret/servers/repo-skylinesC/skylinesC/production/utilities/createTorrents.py'
+alias wenv='source ~/.local/share/virtualenvs/winchrep-u3kh07eS/bin/activate'
+alias k42='sudo fuser -k 4200/tcp'
+alias k8000='fuser -k 8000/tcp'
 
-alias photo='ssh root@hessminecraft.cyou'
-alias dcu='docker-compose up'
-alias dcr='docker rm -f $(docker ps -aq)'
-alias dc='docker-compose'
-alias dcd='docker-compose down --rmi all'
-alias dcp='docker system prune -a -f'
-alias grcr='grep CRON /var/log/syslog'
-alias ll='ls -l'
-alias wc='wc -l'
-alias ncdu='/home/bret/ncduDiskUsage/ncdu -x'
-alias pfr='sudo service postfix restart'
-alias ms='cd /home/bret/mail-server/; pipenv run python mail-server.py'
-nginxconfigbackup() { 
-  sudo cp /etc/nginx/sites-available/skylinescondor /etc/nginx/sites-available/skylinescondor.$(date "+%Y-%m-%d_%H:%M")-$1
-}
+alias sd='cd /home/bret/soardata; pips'
+alias dj='k8000;python manage.py runserver' 
+alias djm='python manage.py makemigrations; python manage.py migrate'
+export st='--settings=soardataApp.settingsReplace.testing'
+alias djt='python manage.py test $st'
+alias djsu='python manage.py createsuperuser'
+alias djst='python manage.py collectstatic'
+#--settings=soardataApp.settings_replace.testinget_test'
+alias djtm='djs; djm'
+alias es='k42;ember serve'
+alias ms='cd /home/bret/mail-server/; pipenv run python mail_server.py'
+export PIPENV_VENV_IN_PROJECT=1
+export PYTHONFAULTHANDLER=1
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-#the parameter ending is the comment use dashes "-" between words
-
-#end bch
-
+# pnpm
+export PNPM_HOME="/home/bret/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
