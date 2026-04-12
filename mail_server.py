@@ -6,9 +6,6 @@ from email.mime.text import MIMEText
 from time import perf_counter, sleep
 from datetime import datetime
 
-shared_path = '/media/shared_VMs'
-sys.path.append(os.path.join(shared_path,'common_py'))
-
 def spinning_cursor():
     while True:
         for cursor in '|/-\\':
@@ -20,19 +17,18 @@ def read_file_no_strip(filepath):
     f.close()
     return lines
 
-queue_dir = os.path.join(shared_path,'mail','queued')
-sent_dir = os.path.join(shared_path,'mail','sent')
-log_file = os.path.join(shared_path,'emails.log')
+mail_dir = '/media/shared_VMs/mail' #put your path here
+queue_dir = os.path.join(mail_dir,'mail','queued')
+sent_dir = os.path.join(mail_dir,'mail','sent')
+log_file = os.path.join(mail_dir,'emails.log')
 loop_period = 10 # sec
 spinner = spinning_cursor()
 spin_tick = 0.3 #sec
 
+if not os.path.exists(mail_dir): os.mkdir(mail_dir)
 if not os.path.exists(queue_dir): os.mkdir(queue_dir)
 if not os.path.exists(sent_dir): os.mkdir(sent_dir)
-if not os.path.exists(queue_dir):
-    os.mkdir(queue_dir)
 
-headers = ["To", "From", "Subject"]
 go = True
 while go:
     to_send = []
