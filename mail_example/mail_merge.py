@@ -9,10 +9,10 @@ from email_scripts import queue_email
 Contains a mailmerge example that is called by merge_example.  See README.md
 """
 
-def merge(subject, message, noms_file, sender_name, domain, addresses_file=None, test_address=None):
+def merge(mail_dir, subject, message, noms_file, sender_name, domain, addresses_file=None, test_address=None):
     message_lines = message
     with open(noms_file, mode='r') as f:
-        reader = csv.Dict_reader(f)
+        reader = csv.DictReader(f)
         headers = reader.fieldnames
         non_header_lines = list(reader)
         total_count  = non_header_lines[0]['Total']
@@ -23,7 +23,7 @@ def merge(subject, message, noms_file, sender_name, domain, addresses_file=None,
             if not os.path.exists(addresses_file):
                 sys.stop(f"Stop: nominations file {noms_file} has no Email column, but you haven't specified an address_file")
             with open(addresses_file, mode='r') as f:
-                 email_rows = list(csv.Dict_reader(f))
+                 email_rows = list(csv.DictReader(f))
                  email_nom = {}
                  e_names = []
                  for erow in email_rows:
@@ -44,7 +44,7 @@ def merge(subject, message, noms_file, sender_name, domain, addresses_file=None,
             if test_address:
                 recip_adrr = test_address
             else:
-                recip_adrr = nrow['email']
+                recip_adrr = nrow['Email']
 
             message_lines = [
                 line.replace('$first',nrow['Name'].split(' ')[0])\
@@ -54,7 +54,7 @@ def merge(subject, message, noms_file, sender_name, domain, addresses_file=None,
                 for line in message_lines
                 ]
 
-            queue_email(sender_addr, nrow['Name'], recip_adrr, subject, message_lines)
+            queue_email(mail_dir, sender_addr, nrow['Name'], recip_adrr, subject, message_lines)
 
             if test_address: #send only one email
                 break

@@ -117,14 +117,14 @@ if ! shopt -oq posix; then
 fi
 
 #bch:
-export PATH="/home/bret/.local/bin/phantomjs-2.1.1-linux-x86_64/bin:$PATH"
+export PATH="/home/user/.local/bin/phantomjs-2.1.1-linux-x86_64/bin:$PATH"
 export QT_QPA_PLATFORM=offscreen
 export PS1='\W> '
 export POSTGIS_GDAL_ENABLED_DRIVERS=GTiff
 export POSTGIS_ENABLE_OUTDB_RASTERS=1
 export FLASK_ENV=development
-alias skyl='cd /home/bret/servers/repo-skylinesC/skylinesC/'
-alias esky='cd /home/bret/servers/repo-skylinesC/skylinesC/ember'
+alias skyl='cd /home/user/servers/repo-skylinesC/skylinesC/'
+alias esky='cd /home/user/servers/repo-skylinesC/skylinesC/ember'
 #alias eserve5='esky;sudo ember serve --environment=production --port 80 --proxy http://localhost:5000/'
 alias eserve42-5='esky;sudo ember serve --environment=production --port 4200 --proxy http://localhost:5000/'
 #alias mserve='skyl; pipenv run ./manage.py runserver'
@@ -147,13 +147,13 @@ alias ngtail-access.log="sudo tail -f -n200 /var/log/nginx/access.log"
 alias ngcd="cd /etc/nginx/"
 alias ngtest="sudo nginx -t"
 alias ngbackup-config-skylines.conf=nginxconfigbackup
-alias bu='python /home/bret/servers/repo-skylinesC/skylinesC/production/utilities/backupSkylines.py'
-alias ct='python /home/bret/servers/repo-skylinesC/skylinesC/production/utilities/createTorrents.py'
+alias bu='python /home/user/servers/repo-skylinesC/skylinesC/production/utilities/backupSkylines.py'
+alias ct='python /home/user/servers/repo-skylinesC/skylinesC/production/utilities/createTorrents.py'
 alias wenv='source ~/.local/share/virtualenvs/winchrep-u3kh07eS/bin/activate'
 alias k42='sudo fuser -k 4200/tcp'
 alias k8000='fuser -k 8000/tcp'
 
-alias sd='cd /home/bret/soardata; pips'
+alias sd='cd /home/user/soardata; pips'
 alias dj='k8000;python manage.py runserver' 
 alias djm='python manage.py makemigrations; python manage.py migrate'
 export st='--settings=soardataApp.settingsReplace.testing'
@@ -163,7 +163,7 @@ alias djst='python manage.py collectstatic'
 #--settings=soardataApp.settings_replace.testinget_test'
 alias djtm='djs; djm'
 alias es='k42;ember serve'
-alias ms='cd /home/bret/mail-server/; pipenv run python mail_server.py'
+alias ms='cd /home/user/mail-server/; pipenv run python mail_server.py'
 export PIPENV_VENV_IN_PROJECT=1
 export PYTHONFAULTHANDLER=1
 export NVM_DIR="$HOME/.nvm"
@@ -171,7 +171,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # pnpm
-export PNPM_HOME="/home/bret/.local/share/pnpm"
+export PNPM_HOME="/home/user/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;

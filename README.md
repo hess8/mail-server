@@ -28,7 +28,7 @@ There is no checking to see if the email was sent by postfix.
 #### email_scripts.py
 Script `queue_email` creates message files.
 
-```queue_email(sender_addr, recip_name, recip_adrr, subject, text_list, help_line='', signature_line='', id=None)```
+```queue_email(sender_addr, recip_name, recip_adrr, subject, message_list, help_line='', signature_line='', id=None)```
 
 ### Mailmerge example
 

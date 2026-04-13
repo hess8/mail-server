@@ -17,17 +17,16 @@ def read_file_no_strip(filepath):
     f.close()
     return lines
 
-mail_dir = '/media/shared_VMs/mail' #put your path here
-queue_dir = os.path.join(mail_dir,'mail','queued')
-sent_dir = os.path.join(mail_dir,'mail','sent')
+mail_dir = '/home/user/mail-server/mail_example/mail' #put your path here
+queue_dir = os.path.join(mail_dir,'queued')
+sent_dir = os.path.join(mail_dir,'sent')
 log_file = os.path.join(mail_dir,'emails.log')
 loop_period = 10 # sec
 spinner = spinning_cursor()
 spin_tick = 0.3 #sec
 
-if not os.path.exists(mail_dir): os.mkdir(mail_dir)
-if not os.path.exists(queue_dir): os.mkdir(queue_dir)
-if not os.path.exists(sent_dir): os.mkdir(sent_dir)
+for path in [mail_dir, queue_dir, sent_dir]: 
+    if not os.path.exists(path): os.mkdir(path)
 
 go = True
 while go:

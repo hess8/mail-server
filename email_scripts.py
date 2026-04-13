@@ -12,31 +12,31 @@ def to_HTML(line):
     return newline
 
 
-def queue_email(sender_addr, recip_name, recip_adrr, subject, text_list, help_line='', signature_line='', id=None):
+def queue_email(mail_dir, sender_addr, recip_name, recip_adrr, subject, message_list, help_line='', signature_line='', id=None):
 
     """
     Queues email to a recipient or a test address.
     creates a text file for each email that email server
     on another machine will read
 
-    text_lines: a list of lines that has all html needed except for paragraph tags
+    message_list: a list of lines that has all html needed except for paragraph tags
     """
-
+    domain = sender_addr.split('@')[1]
     from datetime import datetime
     time_format = '%Y-%m-%d.%H.%M.%S.%f'
-    queue_dir = '/media/sf_shared_VMs/mail/queued'
-    log_file = '/media/sf_shared_VMs/mail/emails.log'
-    if not os.path.exists(queue_dir):
-        os.mkdir(queue_dir)
+    queued_dir = os.path.join(mail_dir, 'queued')
+    log_file = os.path.join(mail_dir,'emails.log')
+    for path in [mail_dir, queued_dir]:
+        if not os.path.exists(path): os.mkdir(path)
     html = []
-    for line in text_list:
+    for line in message_list:
         html.append(to_HTML(line))
     html.append(help_line)
     html.append(signature_line)
     try:
-        file_name = datetime.now().strftime(time_format) + '_skylines_c.msg'
+        file_name = f'{datetime.now().strftime(time_format)}_{domain}.msg'
         time_tag = datetime.now().strftime('%y/%m/%d %H:%M:%S')
-        f = open(os.path.join(queue_dir, file_name), 'w')
+        f = open(os.path.join(queued_dir, file_name), 'w')
         f.write(sender_addr + '\n')
         f.write(recip_adrr + '\n')
         f.write(subject + '\n')
@@ -50,7 +50,7 @@ def queue_email(sender_addr, recip_name, recip_adrr, subject, text_list, help_li
         recip_str = recip_name
         if id:
             recip_str += f' {id}'
-        print(f'Queued email to {recip_str} {recip_adrr}')
+        print(f'Queued email: {recip_str} - {recip_adrr} - {subject} - {sender_addr}')
     except BaseException as e:
-        print(f'Queueing failed {recip_str} {subject}')
+        print(f'Failed to queue: {recip_str} - {recip_adrr} - {subject} - {sender_addr}')
         print(e)
