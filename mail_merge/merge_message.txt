@@ -1,6 +1,6 @@
 Hi $first, you were nominated for Board Member in the upcoming elections.
 
-From the $n_users members who submitted nominations, you received $count nomination(s).
+From the $n_users members who submitted nominations, you received $count nomination(s) out of $total_count.
 
 You can accept or decline your nomination by filling out this short <a href='Form URL'> Nomination Response Form </a>.
 

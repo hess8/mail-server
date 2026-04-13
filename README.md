@@ -14,7 +14,7 @@ It enters a line in `emails.log`, and moves the message from `queued` to `sent`.
 
 There is no checking to see if the email was sent by postfix.
 
-### message file format
+### Message file format
 ```
 <sender address>
 <recipent address>
@@ -24,12 +24,13 @@ There is no checking to see if the email was sent by postfix.
 <html line n>
 ```
 
-### message generating scripts and mailmerge example
+### Message-generating scripts
 #### email_scripts.py
 Script `queue_email` creates message files.
 
 ```queue_email(sender_addr, recip_name, recip_adrr, subject, text_list, help_line='', signature_line='', id=None)```
 
+### Mailmerge example
 
 
 

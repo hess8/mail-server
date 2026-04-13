@@ -1,8 +1,8 @@
 import os,sys
 import csv
 
-from mail_common import match_names, readfile_no_strip
-sys.path.append('/home/bret/mail-server')
+from mail_common import match_names
+sys.path.append('/')
 from email_scripts import queue_email
 
 """ 
@@ -20,6 +20,8 @@ def merge(subject, message, noms_file, sender_name,  addresses_file=None, test_a
         nominees_rows = non_header_lines[1:]
 
         if 'Email' not in headers:
+            if not os.path.exists(addresses_file):
+                sys.stop(f"Stop: nominations file {noms_file} has no Email column, but you haven't specified an address_file")
             with open(addresses_file, mode='r') as f:
                  email_rows = list(csv.Dict_reader(f))
                  email_nom = {}
@@ -37,8 +39,6 @@ def merge(subject, message, noms_file, sender_name,  addresses_file=None, test_a
                         nrow['Email'] = email_nom[matches[0][0]]
                     elif len(matches) == 0:
                         print(f'No email found for {nrow["Name"]}')
-            pass
-
         for nrow in nominees_rows:
             sender_addr = f'{sender_name}@soardata.org'
             if test_address:
@@ -50,8 +50,9 @@ def merge(subject, message, noms_file, sender_name,  addresses_file=None, test_a
                 line.replace('$first',nrow['Name'].split(' ')[0])\
                     .replace('$n_users',n_users)\
                     .replace('$count', nrow['Count'])\
+                    .replace('$total_count', total_count)
                 for line in message_lines
-            ]
+                ]
 
             queue_email(sender_addr, nrow['Name'], recip_adrr, subject, message_lines)
 
