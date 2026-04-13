@@ -9,7 +9,7 @@ from email_scripts import queue_email
 Contains a mailmerge example that is called by merge_example.  See README.md
 """
 
-def merge(subject, message, noms_file, sender_name,  addresses_file=None, test_address=None):
+def merge(subject, message, noms_file, sender_name, domain, addresses_file=None, test_address=None):
     message_lines = message
     with open(noms_file, mode='r') as f:
         reader = csv.Dict_reader(f)
@@ -40,7 +40,7 @@ def merge(subject, message, noms_file, sender_name,  addresses_file=None, test_a
                     elif len(matches) == 0:
                         print(f'No email found for {nrow["Name"]}')
         for nrow in nominees_rows:
-            sender_addr = f'{sender_name}@soardata.org'
+            sender_addr = f'{sender_name}@{domain}'
             if test_address:
                 recip_adrr = test_address
             else:

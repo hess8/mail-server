@@ -12,6 +12,7 @@ nominations = os.path.join(base_dir,'nominations.csv')
 addresses = os.path.join(base_dir,'members.csv')
 test_address = 'bret.hess@gmail.com'
 sender_name = 'Bret'
+domain = 'soardata.org'
 queue_dir = '/home/bret/mail-server/mail/queued/'
 subject = 'You were nominated for the board election'
 message = readfile_no_strip('merge_message.txt')
