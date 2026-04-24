@@ -7,8 +7,8 @@ from mail_merge import merge
 See README.md for the description of this mailmerge example
 """
 
-base_dir = '/home/user/mail-server/'
-mail_dir = '/home/user/mail-server/mail_example/mail'
+base_dir = '/home/bret/mail-server/'
+mail_dir = '/home/bret/mail-server/mail_example/mail'
 nominations = os.path.join(base_dir,'mail_example/nominations.csv')
 addresses = os.path.join(base_dir,'mail_example/members.csv')
 test_address = 'admin@gmail.com'

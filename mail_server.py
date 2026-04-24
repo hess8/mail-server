@@ -17,7 +17,7 @@ def read_file_no_strip(filepath):
     f.close()
     return lines
 
-mail_dir = '/home/user/mail-server/mail_example/mail' #put your path here
+mail_dir = '/media/sf_shared_VMs/mail' #put your path here
 queue_dir = os.path.join(mail_dir,'queued')
 sent_dir = os.path.join(mail_dir,'sent')
 log_file = os.path.join(mail_dir,'emails.log')
